@@ -1,5 +1,5 @@
 # Useful-FFmpeg-Script
-## ffmpeg 简单处理视频的实用脚本   
+## FFmpeg 简单处理视频的实用脚本   
 
 ## cut.py
 
@@ -14,18 +14,14 @@
 * 使用方法：python cut.py --m ts --i [input_path]
 
 ### 合并用法：
-* 使用方法：python cut.py --m mg --i [input_path]
-
-webm2mp4.sh
+* 使用方法：python cut.py --m mg --i [vidio_path] [audipo_path]
 
 
-##下面这些脚本都融合在cut.py中了
-## webm2mp4.sh
+## 下面这些脚本都融合在cut.py中了
+### webm2mp4.sh
 * 作用：将webm转换成mp4格式
-
 * 使用方法：./webm2mp4.sh [webm_file]
 
-## merge.sh
+### merge.sh
 * 作用：把音频合并到视频中
-
 * 使用方法：./merge.sh [vidio_file] [audio_file]
