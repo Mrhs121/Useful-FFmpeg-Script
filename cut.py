@@ -3,7 +3,7 @@ import sys
 import xlwt
 from moviepy.editor import VideoFileClip
 import argparse
-
+import math
  
 class FileUtils():
  
@@ -48,30 +48,97 @@ class FileUtils():
             tim_srt = u'%s小时%s分钟%s秒'%(hour,mine,second)
             return tim_srt
 
-def cut(input,t,output):
-    file_util = FileUtils()
-    _,s = file_util.get_file_times(input)
+def create_output_path(input,output):
     _filename = os.path.basename(input)
     filename, extension = os.path.splitext(_filename)
-    print(filename, extension)
-    isExists=os.path.exists(filename)
+    output_dir = os.path.join(output,'sub-videos',"sub-"+filename)
+    print("output path: ",output_dir)
+    isExists=os.path.exists(output_dir)
     if not isExists:
-        os.makedirs(filename) 
-    import math
-    num = math.ceil( s / t)
-    print(num)
+        os.makedirs(output_dir)
+    base_output_file = 'sub{}-'+filename+extension
+    return os.path.join(output_dir,base_output_file),filename
+
+def cut_by_duration_time(input,t,output='./'):
+    file_util = FileUtils()
+    _,s = file_util.get_file_times(input)
+    base_output_file = create_output_path(input,output)
+    num = math.ceil( s / 30 )
+    print("将video剪切成{}部分，每部分{}s".format(num,t))
     for i in range(0,num):
+        print("生成 sub-{}".format(i+1))
         start = i*t
-        os.system('ffmpeg -ss {} -t {} -accurate_seek -i {} -codec copy -avoid_negative_ts 1 {}/cut-{}.{}'.format(start,t,input,filename,str(i+1),extension))
+        output_file = base_output_file.format(i)
+        os.system('ffmpeg -y -loglevel 0 -ss {} -t {} -accurate_seek -i {} -codec copy -avoid_negative_ts 1 {} > /dev/null'.format(start,t,input,output_file))
+
+def cut_by_num_of_subvideo(input,n,output='./'):
+    file_util = FileUtils()
+    _,second = file_util.get_file_times(input)
+    base_output_file,filename = create_output_path(input,output)
+    sub_second = math.ceil( second / n )
+    print("filename:{} length: {}".format(filename,second))
+    print("cut video into {} subv, every subv {}s".format(n,sub_second))
+    for i in range(0,n):
+        print("生成 sub-{}".format(i+1))
+        start = i*sub_second
+        output_file = base_output_file.format(i)
+        os.system('ffmpeg -y -loglevel 0 -ss {} -t {} -accurate_seek -i {} -codec copy -avoid_negative_ts 1 {} '.format(start,sub_second,input,output_file))
+
+def to_mp4(input,output='./'):
+    file_util = FileUtils()
+    _,second = file_util.get_file_times(input)
+    _filename = os.path.basename(input)
+    filename, extension = os.path.splitext(_filename)
+    output_dir = os.path.join(output,'conversed')
+    isExists=os.path.exists(output_dir)
+    if not isExists:
+        os.makedirs(output_dir)  
+
+    output_file = os.path.join(output_dir,filename+'-conv.mp4')
+    print("====> save to ",output_file)
+    os.system('ffmpeg -i {} {}'.format(input,output_file))
+
+
+def merge(video_path,audio_path,output):
+    _filename = os.path.basename(video_path)
+    filename, extension = os.path.splitext(_filename)
+    output_dir = os.path.join(output,'merged')
+    isExists=os.path.exists(output_dir)
+    if not isExists:
+        os.makedirs(output_dir)
+    output_file = os.path.join(output_dir,filename+'-merge.mp4')
+    print("====> save to ",output_file)
+    os.system('ffmpeg -i {}  -vcodec copy  temp.mp4'.format(video_path))
+    os.system('fffmpeg -i temp.mp4 -i {} -c copy {}'.format(video_path,output_file))
+    os.remove('temp.mp4')
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="ffmpeg视频处理脚本，包含视频裁切，视频转码，视频合并")
     parser.add_argument('--i', type=str,help='the path of the video')
+    parser.add_argument('--m', type=str,help='use which tool. [cut] for cut or [ts] for transcoding or [mg] for merge')
     parser.add_argument('--t', type=int,help='The length of each subvideo',default=30)
-    parser.add_argument('--o', type=str,help='The path of the output',default='subvideo')
+    parser.add_argument('--o', type=str,help='The path of the output',default='./')
+    parser.add_argument('--c', type=str,help='the approch of cut. [num]:cut_by_num_of_subvideo or [time]:cut_by_duration_time',default='num')
+    parser.add_argument('--n', type=int,help='num_of_subvideo',default=5)
+    parser.add_argument('--a', type=int,help='the audio path')
     args = parser.parse_args()
-    if args.i:
-        print("Cut ",args.i)
-        cut(args.i,args.t,args.o)
+    if args.m:
+        if args.m=='cut' and args.i:
+            if args.c == 'time':
+                print("cut_by_duration_time: ")
+                cut_by_duration_time(args.i,args.t,args.o)           
+            elif args.c == 'num':
+                print("cut_by_num_of_subvideo")
+                cut_by_num_of_subvideo(args.i,args.n,args.o)
+            else:
+                print("Please specify the approch of cut: [time] or [num]")
+        elif args.m=='ts'and args.i:
+            to_mp4(args.i,args.o)
+        elif args.m=='mg' and args.i and args.a:
+            merge(args.i,args.a)
+        else:
+            print("Please specify which tool to be use:  [c] for cut or [t] for transcoding")
+            parser.print_help()
     else:
-        print("please give the input file")
+        print("Please specify which tool to be use:  [c] for cut or [t] for transcoding")
+        parser.print_help()
