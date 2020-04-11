@@ -62,14 +62,16 @@ def create_output_path(input,output):
 def cut_by_duration_time(input,t,output='./'):
     file_util = FileUtils()
     _,s = file_util.get_file_times(input)
-    base_output_file = create_output_path(input,output)
+    base_output_file,filename = create_output_path(input,output)
     num = math.ceil( s / 30 )
-    print("将video剪切成{}部分，每部分{}s".format(num,t))
-    for i in range(0,num):
-        print("生成 sub-{}".format(i+1))
-        start = i*t
-        output_file = base_output_file.format(i)
-        os.system('ffmpeg -y -loglevel 0 -ss {} -t {} -accurate_seek -i {} -codec copy -avoid_negative_ts 1 {} > /dev/null'.format(start,t,input,output_file))
+    print("filename:{} length: {}".format(filename,s))
+    print("cut video into {} subv, every subv {}s".format(num,t))
+    cut(num,t,base_output_file,input)
+    # for i in range(0,num):
+    #     print("生成 sub-{}".format(i+1))
+    #     start = i*t
+    #     output_file = base_output_file.format(i)
+    #     os.system('ffmpeg -y -loglevel 0 -ss {} -t {} -accurate_seek -i {} -codec copy -avoid_negative_ts 1 {} > /dev/null'.format(start,t,input,output_file))
 
 def cut_by_num_of_subvideo(input,n,output='./'):
     file_util = FileUtils()
@@ -78,6 +80,14 @@ def cut_by_num_of_subvideo(input,n,output='./'):
     sub_second = math.ceil( second / n )
     print("filename:{} length: {}".format(filename,second))
     print("cut video into {} subv, every subv {}s".format(n,sub_second))
+    cut(n,sub_second,base_output_file,input)
+    # for i in range(0,n):
+    #     print("生成 sub-{}".format(i+1))
+    #     start = i*sub_second
+    #     output_file = base_output_file.format(i)
+    #     os.system('ffmpeg -y -loglevel 0 -ss {} -t {} -accurate_seek -i {} -codec copy -avoid_negative_ts 1 {} '.format(start,sub_second,input,output_file))
+
+def cut(n,sub_second,base_output_file,input):
     for i in range(0,n):
         print("生成 sub-{}".format(i+1))
         start = i*sub_second
