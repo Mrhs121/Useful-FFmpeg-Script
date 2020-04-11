@@ -8,7 +8,7 @@
 * 参数说明：--c：选择裁切的方法【按数量裁切｜按时间裁切】，--n：裁切成多少个子视频，--a：音频路径
 ### 裁切用法：
 * 使用方法：python cut.py --m cut --i [your_video] --n 10，将视频裁切成10份
-* 使用方法：python cut.py --m cut --c time -t 30 --i [your_videio]，每30s裁切一个子视频
+* 使用方法：python cut.py --m cut --c time -t 30 --i [your_video]，每30s裁切一个子视频
 
 ### 转码用法：
 * 使用方法：python cut.py --m ts --i [input_path]
