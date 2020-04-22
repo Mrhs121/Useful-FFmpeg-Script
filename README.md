@@ -13,7 +13,7 @@
 ### 转码用法：
 * 使用方法：python cut.py --m ts --i [input_path]
 
-### 合并用法：
+### 视频音频合并用法：
 * 使用方法：python cut.py --m mg --i [video_path] [audio_path]
 
 
