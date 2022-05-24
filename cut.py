@@ -63,7 +63,7 @@ def cut_by_duration_time(input,t,output='./'):
     file_util = FileUtils()
     _,s = file_util.get_file_times(input)
     base_output_file,filename = create_output_path(input,output,"time")
-    num = math.ceil( s / 30 )
+    num = math.ceil( s / t )
     print("filename:{} length: {}".format(filename,s))
     print("cut video into {} subv, every subv {}s".format(num,t))
     cut(num,t,base_output_file,input)
