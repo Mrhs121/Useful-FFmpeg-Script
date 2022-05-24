@@ -13,13 +13,16 @@
 
 ### 转码h.264用法：
 * 使用方法：python cut.py --m ts --i <input_path>
+* demo：python cut.py --m ts --i abc.webm
 
 ### 视频音频合并用法：
 * 使用方法：python cut.py --m mg --i <video_path> --a <audio_path>
+* demo：python cut.py --m mg --i video.mp4 --a audio.mp3
 
 ### 旋转视频
 * 使用方法：python cut.py --i [video_path] --m ro --r [Angle]
-* 
+* demo: python cut.py --i abc.mp4 --m ro --r 270
+
 
 
 
