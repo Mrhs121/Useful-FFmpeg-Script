@@ -10,18 +10,11 @@
 * 使用方法：python cut.py --m cut --i [your_video] --n 10，将视频裁切成10份
 * 使用方法：python cut.py --m cut --c time -t 30 --i [your_video]，每30s裁切一个子视频
 
-### 转码用法：
+### 转码h.264用法：
 * 使用方法：python cut.py --m ts --i [input_path]
 
 ### 视频音频合并用法：
 * 使用方法：python cut.py --m mg --i [video_path] [audio_path]
 
 
-## 下面这些脚本都融合在cut.py中了
-### webm2mp4.sh
-* 作用：将webm转换成mp4格式
-* 使用方法：./webm2mp4.sh [webm_file]
 
-### merge.sh
-* 作用：把音频合并到视频中
-* 使用方法：./merge.sh [vidio_file] [audio_file]
