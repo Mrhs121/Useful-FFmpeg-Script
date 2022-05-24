@@ -1,6 +1,10 @@
 # Useful-FFmpeg-Script
 ## FFmpeg 简单处理视频的实用脚本   
 
+### Requirements:
+* python3
+* ffmpeg
+
 ## cut.py
 
 ### 作用：ffmpeg视频处理脚本，包含视频裁切，视频转码，视频合并
