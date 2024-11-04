@@ -4,6 +4,7 @@ import xlwt
 from moviepy.editor import VideoFileClip
 import argparse
 import math
+import shlex
 
 class FileUtils():
 
@@ -66,7 +67,9 @@ def cut_by_duration_time(input,t,output='./'):
     num = math.ceil( s / t )
     print("filename:{} length: {}".format(filename,s))
     print("cut video into {} subv, every subv {}s".format(num,t))
-    cut(num,t,base_output_file,input)
+    input_quoted = shlex.quote(input)
+    output_quoted = shlex.quote(base_output_file)
+    cut(num,t,output_quoted,input_quoted)
 
 def cut_by_num_of_subvideo(input,n,output='./'):
     file_util = FileUtils()
@@ -75,7 +78,9 @@ def cut_by_num_of_subvideo(input,n,output='./'):
     sub_second = math.ceil( second / n )
     print("filename:{} length: {}".format(filename,second))
     print("cut video into {} subv, every subv {}s".format(n,sub_second))
-    cut(n,sub_second,base_output_file,input)
+    input_quoted = shlex.quote(input)
+    output_quoted = shlex.quote(base_output_file)
+    cut(n,sub_second,output_quoted,input_quoted)
 
 def cut(n,sub_second,base_output_file,input):
     for i in range(0,n):
@@ -96,7 +101,9 @@ def to_mp4(input,output='./'):
 
     output_file = os.path.join(output_dir,filename+'-conv.mp4')
     print("====> save to ",output_file)
-    os.system('ffmpeg -i {} {}'.format(input,output_file))
+    input_quoted = shlex.quote(input)
+    output_quoted = shlex.quote(output_file)
+    os.system('ffmpeg -i {} {}'.format(input_quoted,output_quoted))
 
 #ffmpeg -i 2021.mp4 -metadata:s:v rotate="270" -codec copy 徐真真.mp4
 def rotate(r,input,output='./'):
@@ -110,7 +117,10 @@ def rotate(r,input,output='./'):
         os.makedirs(output_dir)
     output_file = os.path.join(output_dir,filename+'.mp4')
     print("====> save to ",output_file)
-    os.system('ffmpeg -i {} -metadata:s:v rotate="{}" -codec copy {}'.format(input,r,output_file))
+    # 使用 shlex.quote 来处理特殊路径
+    input_quoted = shlex.quote(input)
+    output_quoted = shlex.quote(output_file)
+    os.system('ffmpeg -i {} -metadata:s:v rotate="{}" -codec copy {}'.format(input_quoted,r,output_quoted))
 
 
 
@@ -123,8 +133,11 @@ def merge(video_path,audio_path,output):
         os.makedirs(output_dir)
     output_file = os.path.join(output_dir,filename+'-merge.mp4')
     print("====> save to ",output_file)
-    os.system('ffmpeg -i {}  -vcodec copy  temp.mp4'.format(video_path))
-    os.system('ffmpeg -loglevel 0 -y -i temp.mp4 -i {} -c copy {}'.format(audio_path,output_file))
+    input_quoted = shlex.quote(video_path)
+    output_quoted = shlex.quote(output_file)
+    audio_quoted = shlex.quote(audio_path)
+    os.system('ffmpeg -i {}  -vcodec copy  temp.mp4'.format(input_quoted))
+    os.system('ffmpeg -loglevel 0 -y -i temp.mp4 -i {} -c copy {}'.format(audio_quoted,output_quoted))
     os.remove('temp.mp4')
 
 if __name__ == "__main__":
