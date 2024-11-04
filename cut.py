@@ -105,7 +105,6 @@ def to_mp4(input,output='./'):
     output_quoted = shlex.quote(output_file)
     os.system('ffmpeg -i {} {}'.format(input_quoted,output_quoted))
 
-#ffmpeg -i 2021.mp4 -metadata:s:v rotate="270" -codec copy 徐真真.mp4
 def rotate(r,input,output='./'):
     file_util = FileUtils()
     _,second = file_util.get_file_times(input)
