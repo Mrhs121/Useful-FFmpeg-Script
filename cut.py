@@ -141,7 +141,7 @@ def merge(video_path,audio_path,output):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ffmpeg视频处理脚本，包含视频裁切，视频转码，视频合并")
-    parser.add_argument('--i', type=str,help='the path of the video')
+    parser.add_argument('--i', nargs='+', help='the path of the video', required=True)
     parser.add_argument('--m', type=str,help='use which tool. [cut] for cut or [ts] for transcoding or [mg] for merge')
     parser.add_argument('--t', type=int,help='The length of each subvideo',default=30)
     parser.add_argument('--o', type=str,help='The path of the output',default='./')
@@ -154,18 +154,23 @@ if __name__ == "__main__":
         if args.m=='cut' and args.i:
             if args.c == 'time':
                 print("cut_by_duration_time: ")
-                cut_by_duration_time(args.i,args.t,args.o)
+                for i in args.i:
+                    cut_by_duration_time(i,args.t,args.o)
             elif args.c == 'num':
                 print("cut_by_num_of_subvideo")
-                cut_by_num_of_subvideo(args.i,args.n,args.o)
+                for i in args.i:
+                    cut_by_num_of_subvideo(i,args.n,args.o)
             else:
                 print("Please specify the approch of cut: [time] or [num]")
         elif args.m=='ts'and args.i:
-            to_mp4(args.i,args.o)
+            for i in args.i:
+                to_mp4(i,args.o)
         elif args.m=='mg' and args.i and args.a:
-            merge(args.i,args.a,args.o)
+            for i in args.i:
+                merge(i,args.a,args.o)
         elif args.m=='ro' and args.i:
-            rotate(args.r,args.i,args.o)
+            for i in args.i:
+                rotate(args.r,i,args.o)
         else:
             print("Please specify which tool to be use:  [c] for cut or [t] for transcoding")
             parser.print_help()
